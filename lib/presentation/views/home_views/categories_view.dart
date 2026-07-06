@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cinema_app/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class CategoriesView extends ConsumerWidget {
   const CategoriesView({super.key});
@@ -29,7 +30,10 @@ class CategoriesView extends ConsumerWidget {
                 ),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
-                  onTap: () {},
+                  onTap: () => context.push(
+                    '/categories/genre/${genre.id}',
+                    extra: genre.genre,
+                  ),
                   child: SizedBox(
                     width: double.infinity,
                     height: 60,
