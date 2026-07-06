@@ -3,7 +3,7 @@ import 'package:cinema_app/domain/repositories/local_storage_repositories.dart';
 import 'package:cinema_app/presentation/providers/storage/local_storage_provider.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
-final favoriteMoviesProvider = StateNotifierProvider((ref){
+final favoriteMoviesProvider = StateNotifierProvider<StorageMoviesNotifier, Map<int, Movie>>((ref){
 
   final localStorageRepositories = ref.watch(localStorageRepositoryProvider);
   return StorageMoviesNotifier(localStorageRepositories: localStorageRepositories);
