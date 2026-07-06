@@ -1,11 +1,11 @@
 {
-    "name": "cinema_app",
-    "short_name": "cinema_app",
+    "name": "Cinema App",
+    "short_name": "Cinema App",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Flutter movie discovery app powered by The Movie Database.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
