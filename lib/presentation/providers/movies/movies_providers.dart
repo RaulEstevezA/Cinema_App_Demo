@@ -1,5 +1,6 @@
 import 'package:cinema_app/domain/entities/movies.dart';
 import 'package:cinema_app/presentation/providers/movies/movies_repository_provider.dart';
+import 'package:cinema_app/presentation/providers/providers.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 
@@ -35,6 +36,14 @@ final topRatedMoviesProvider = StateNotifierProvider<MoviesNotifier, List<Movie>
 
  return MoviesNotifier(
   fetchMoreMovies: fetchMoreMovies
+ );
+});
+
+final moviesByGenreProvider = StateNotifierProvider.family<MoviesNotifier, List<Movie>, int>((ref, genreId){
+  final movieRepository = ref.watch(movieRepositoryProvider);
+
+ return MoviesNotifier(
+  fetchMoreMovies: ({int page = 1}) => movieRepository.getMoviesByGenre(genreId, page: page),
  );
 });
 
