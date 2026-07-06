@@ -35,6 +35,16 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/categories',
               builder: (context, state) => CategoriesView(),
+              routes: [
+                GoRoute(
+                  path: 'genre/:id',
+                  builder: (context, state) {
+                    final genreId = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+                    final genreName = state.extra as String? ?? '';
+                    return MoviesByGenreScreen(genreId: genreId, genreName: genreName);
+                  },
+                ),
+              ],
             ),
           ],
         ),
