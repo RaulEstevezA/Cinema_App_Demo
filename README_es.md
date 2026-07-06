@@ -21,7 +21,7 @@ El commit `239f87d` marca el final de la parte del proyecto acompañada por el c
 
 ## Descripción General
 
-Cinema App, con marca interna en la interfaz como **Cinemapedia**, es una aplicación Flutter de descubrimiento de películas que consume [The Movie Database (TMDB)](https://www.themoviedb.org). Usa Clean Architecture, Riverpod como gestor de estado y Drift con SQLite para persistir favoritos localmente.
+Cinema App es una aplicación Flutter de descubrimiento de películas que consume [The Movie Database (TMDB)](https://www.themoviedb.org). Usa Clean Architecture, Riverpod como gestor de estado y Drift con SQLite para persistir favoritos localmente.
 
 Una parte técnica central de la app es el uso de APIs externas y el mapeo de la información remota hacia entidades estables del dominio. Las respuestas de TMDB se reciben como DTOs, se transforman mediante mappers dedicados y se exponen a la capa de presentación a través de repositorios, evitando que la UI dependa directamente de la forma de las respuestas de la API.
 
@@ -149,7 +149,7 @@ El código de acceso a base de datos se genera con `drift_dev` en `favorite_data
   <img src="docs/images/home_view.png" alt="Vista principal" width="150">
 </p>
 
-`HomeScreen` es el scaffold externo. Contiene el `StatefulNavigationShell` de Go Router y la navegación inferior personalizada. `HomeView` usa un `SliverAppBar` con el app bar propio, el texto de marca Cinemapedia y el icono de búsqueda.
+`HomeScreen` es el scaffold externo. Contiene el `StatefulNavigationShell` de Go Router y la navegación inferior personalizada. `HomeView` usa un `SliverAppBar` con un app bar propio y el icono de búsqueda.
 
 La pantalla incluye un slideshow autoreproducible con las 6 primeras películas en cartelera, además de cuatro listas horizontales con paginación infinita:
 
