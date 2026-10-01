@@ -33,7 +33,9 @@ class AppDatabase extends _$AppDatabase {
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
-      name: 'my_database',
+      // Nombre propio: en web todas las demos de raulesteveza.github.io
+      // comparten el almacenamiento del navegador (IndexedDB es por dominio).
+      name: 'cinema_app_demo',
       native: const DriftNativeOptions(
         // By default, `driftDatabase` from `package:drift_flutter` stores the
         // database files in `getApplicationDocumentsDirectory()`.
