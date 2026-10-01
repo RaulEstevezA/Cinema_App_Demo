@@ -1,76 +1,32 @@
-# Cinema App
+# Cinema App · Web Demo
 
-Cinema App is a Flutter movie discovery application powered by [The Movie Database (TMDB)](https://www.themoviedb.org). It includes movie listings, search, details, cast information, genre browsing and local favorites stored with SQLite.
+> [!IMPORTANT]
+> **This is not the main Cinema App repository.**
+> This repository only contains the **web demo** published on my website.
+> The full project (source code, the original version using the TMDB API, and instructions to download and run the app) lives here:
+>
+> **➡️ [RaulEstevezA/Cinema_App](https://github.com/RaulEstevezA/Cinema_App)**
 
-- 🇬🇧 **English version:**  
-  [Full functional app overview (English)](./README_en.md)
+**▶️ Live demo:** [raulesteveza.github.io/demos/Cinema_App](https://raulesteveza.github.io/demos/Cinema_App/)
 
-- 🇪🇸 **Versión en español:**  
-  [Resumen completo de la app funcional (Español)](./README_es.md)
+- 🇬🇧 **English:** [About this demo repository](./README_en.md)
+- 🇪🇸 **Español:** [Sobre este repositorio de demo](./README_es.md)
 
 <p align="center">
-  <img src="docs/images/home_view.png" alt="Cinema App home screen" width="180">
+  <a href="https://raulesteveza.github.io/demos/Cinema_App/">
+    <img src="docs/images/web_demo.png" alt="Cinema App web demo running inside a phone frame" width="720">
+  </a>
 </p>
 
-## Project Summary
+## What is this repository?
 
-This project was built as part of Fernando Herrera's **"Flutter de Cero a Experto"** course. The course-guided section ends at commit `239f87d`; everything after that point was developed independently, including genre/category browsing, movies by genre, the custom app icon and tab transition animations.
+A copy of Cinema App adapted to run **in the browser, on GitHub Pages, without any API**:
 
-The app follows a Clean Architecture approach with a clear separation between domain, infrastructure and presentation layers. A key part of the project is its API integration and data mapping flow: TMDB responses are consumed through dedicated datasources, converted from remote DTOs into domain entities and then exposed to the UI through repositories and Riverpod providers. Favorite movies are persisted locally using Drift over SQLite.
+- Movie data comes from a **static database bundled with the app**, built from free-licensed sources (Wikidata, Wikimedia Commons and Wikipedia) instead of the TMDB API.
+- The app is shown inside a **phone frame** on desktop and full screen on mobile.
+- Every push to `main` is **built and deployed automatically** to my website with GitHub Actions.
 
-## Main Technologies
-
-| Technology | Purpose |
-|---|---|
-| Flutter / Dart | Cross-platform application framework |
-| Riverpod | State management |
-| Go Router | Declarative navigation with tabs and nested routes |
-| Dio | HTTP client for TMDB API calls |
-| Custom mappers | Conversion from TMDB DTOs to app domain entities |
-| Drift / SQLite | Local persistence for favorite movies |
-| flutter_dotenv | Environment variable loading |
-| animate_do | UI animations |
-| card_swiper | Featured movies carousel |
-| flutter_staggered_grid | Masonry layout for favorites |
-
-## Features
-
-- Home screen with now playing, upcoming, popular and top rated movies.
-- Movie detail screen with backdrop, poster, overview, genres, cast and favorite toggle.
-- Debounced movie search.
-- Local favorites with infinite pagination.
-- Genre/category list and movies filtered by genre.
-- Remote and local pagination.
-- Cached movie details and cast data.
-- Dedicated API integration and mapping layer for movies, actors and genres.
-- Custom app icon for Android and iOS.
-
-## Setup
-
-1. Copy `.env.template` to `.env`.
-2. Add your TMDB API key:
-
-```env
-THE_MOVIEDB_KEY=your_tmdb_api_key
-```
-
-3. Install dependencies:
-
-```bash
-flutter pub get
-```
-
-4. Regenerate Drift code if the database schema changes:
-
-```bash
-dart run build_runner build
-```
-
-5. Run the app:
-
-```bash
-flutter run
-```
+The app architecture (Clean Architecture, Riverpod, go_router, Drift) is the same as in the main repository. Only the data source and the web-specific details change.
 
 ## Developer
 

@@ -1,317 +1,127 @@
-# Cinema App - Full Project Overview
+# Cinema App · Web Demo
+
+> [!IMPORTANT]
+> **This is not the main Cinema App repository.**
+> It only contains the **web demo** published on my website.
+> The full project (source code, the original version using the TMDB API, and instructions to download and run the app) lives here:
+>
+> **➡️ [RaulEstevezA/Cinema_App](https://github.com/RaulEstevezA/Cinema_App)**
+
+**▶️ Live demo:** [raulesteveza.github.io/demos/Cinema_App](https://raulesteveza.github.io/demos/Cinema_App/)
 
 <p align="center">
-  <a href="https://youtube.com/shorts/67coTqVxwA4">
-    <img src="docs/images/home_view.png" alt="Cinema App video demo" width="150">
+  <a href="https://raulesteveza.github.io/demos/Cinema_App/">
+    <img src="docs/images/web_demo.png" alt="Cinema App web demo running inside a phone frame" width="720">
   </a>
 </p>
 
-<p align="center">
-  <a href="https://youtube.com/shorts/67coTqVxwA4">Watch the video demo on YouTube</a>
-</p>
+## Why this repository exists
 
-## Project Status
+Cinema App is a Flutter mobile app that gets its movies from The Movie Database (TMDB) API. To showcase it on my website without depending on an API or a key, this repository holds an adapted copy that:
 
-**Snapshot updated:** `2026-07-06`  
-**Branch:** `main`  
-**Last documented commit:** `07897fe` - "Refactor code structure for improved readability and maintainability"  
-**Status:** completed app, with all main screens and flows implemented.
+1. **Uses no API at all.** Movies come from a static database bundled with the app, built from free-licensed sources.
+2. **Runs in the browser**, published on GitHub Pages in the demos section of my website.
+3. **Deploys itself**: every push to `main` builds the app and publishes it with GitHub Actions.
 
-Commit `239f87d` marks the end of the course-guided part of the project. Everything after that point, including genres/categories, navigation by genre, the app icon and animations, was developed independently.
+The architecture is the same as in the main repository (Clean Architecture, Riverpod, go_router, Drift). Thanks to the separation between domain and infrastructure, switching the data source only required new datasources: the UI and app logic don't know where the movies come from.
 
-## Overview
+## Differences from the original app
 
-Cinema App is a Flutter movie discovery app powered by [The Movie Database (TMDB)](https://www.themoviedb.org). It uses Clean Architecture, Riverpod for state management and Drift with SQLite for local favorite movie persistence.
-
-A central technical focus of the app is the use of external APIs and the mapping of remote data into stable domain entities. TMDB responses are received as DTOs, transformed by dedicated mappers and exposed to the presentation layer through repository interfaces, keeping the UI independent from the API response shape.
-
-## Technologies and Dependencies
-
-**SDK:** Dart `^3.11.4` / Flutter
-
-| Package | Version | Purpose |
-|---|---:|---|
-| flutter_riverpod | ^3.3.1 | State management |
-| go_router | ^17.2.3 | Navigation with `StatefulShellRoute` |
-| dio | ^5.9.2 | HTTP client for API requests |
-| drift | ^2.34.0 | SQLite ORM and local persistence |
-| drift_flutter | ^0.3.0 | Flutter adapter for Drift |
-| drift_dev | ^2.34.0 | Drift code generation |
-| flutter_staggered_grid | ^0.1.2 | `MasonryGridView` / `SliverMasonryGrid` |
-| path_provider | ^2.1.6 | System directory lookup |
-| animate_do | ^5.1.0 | Animations such as `FadeIn`, `FadeInRight` and `SpinPerfect` |
-| card_swiper | ^3.0.1 | Featured movie carousel |
-| flutter_dotenv | ^6.0.1 | `.env` environment variables |
-| intl | ^0.20.2 | Date formatting in Spanish |
-| flutter_lints | ^6.0.0 | Linting rules |
-| flutter_launcher_icons | ^0.14.4 | Android/iOS app icon generation |
-| mocktail | ^1.0.5 | Unit test mocks |
-
-## Data Source
-
-- **API:** The Movie Database (TMDB) - https://www.themoviedb.org
-- **Base URL:** `https://api.themoviedb.org/3`
-- **Authentication:** API key through the `api_key` query parameter, stored in `.env` as `THE_MOVIEDB_KEY`
-- **Language:** `language=es-ES` in all requests
-- **Image CDN:** `https://image.tmdb.org/t/p/w500{path}`
-
-The app does not pass raw API responses directly to the UI. Each response is parsed into infrastructure models and converted into domain entities such as `Movie`, `Actor` and `Genres`. This keeps API-specific field names, nullable values and image path normalization contained inside the infrastructure layer.
-
-### API Endpoints
-
-| Endpoint | Purpose |
-|---|---|
-| `/movie/now_playing` | Now playing movies |
-| `/movie/popular` | Popular movies |
-| `/movie/upcoming` | Upcoming releases |
-| `/movie/top_rated` | Top rated movies |
-| `/movie/{id}` | Full movie details |
-| `/search/movie` | Movie search |
-| `/movie/{id}/credits` | Cast and crew |
-| `/genre/movie/list` | Movie genre list |
-| `/discover/movie?with_genres=` | Movies filtered by genre, with pagination |
-
-## Architecture
-
-The project uses Clean Architecture split into domain, infrastructure and presentation layers:
-
-```text
-lib/
-├── config/
-│   ├── constants/        # Environment variables and API key access
-│   ├── database/         # Drift AppDatabase and FavoriteMovies schema
-│   ├── helpers/          # HumanFormats
-│   ├── router/           # Go Router with 3-tab StatefulShellRoute
-│   └── theme/            # Material Design 3, primary color #2862F5
-├── domain/
-│   ├── datasources/      # Movies, actors, local storage and genres contracts
-│   ├── entities/         # Movie, Actor and Genres
-│   └── repositories/     # Repository interfaces
-├── infrastructure/
-│   ├── datasources/      # TMDB, Drift and genres data sources
-│   ├── mappers/          # MovieMapper, ActorMapper and GenreMapper
-│   ├── models/           # TMDB DTOs
-│   └── repositories/     # Repository implementations
-└── presentation/
-    ├── providers/        # Riverpod providers for movies, storage and genres
-    ├── screens/          # HomeScreen, MovieScreen and MoviesByGenreScreen
-    ├── views/            # HomeView, FavoritesView and CategoriesView
-    ├── widgets/          # Movie and shared UI widgets
-    └── delegate/         # SearchMovieDelegate
-```
-
-### API Integration and Data Mapping
-
-The API and mapping flow is one of the most important parts of the project:
-
-- Datasources call TMDB endpoints with Dio and environment-based API key configuration.
-- Infrastructure models represent the remote response shape returned by TMDB.
-- Mappers convert those models into app-level domain entities.
-- Repositories expose clean methods to the rest of the app without leaking API details.
-- Riverpod providers consume repositories and deliver ready-to-render state to the UI.
-
-This pattern is used for movies, movie details, actors/cast and genres. It also makes pagination, caching and future API changes easier to manage because the remote contract is isolated from the presentation layer.
-
-The app icon source is `assets/icon/icon.png` (`1254x1254`) and the `flutter_launcher_icons` configuration lives in `pubspec.yaml`. The generated assets target Android and iOS.
-
-## Local Database
-
-**File:** `lib/config/database/favorite_database.dart`  
-**Database file name:** `my_database`, stored through `getApplicationSupportDirectory`.
-
-### `FavoriteMovies`
-
-| Column | Type | Notes |
+| | Original app ([Cinema_App](https://github.com/RaulEstevezA/Cinema_App)) | This demo |
 |---|---|---|
-| id | INTEGER | Autoincrement primary key |
-| movie_id | INTEGER | TMDB movie ID |
-| backdrop_path | TEXT | Backdrop image path |
-| original_title | TEXT | Original movie title |
-| poster_path | TEXT | Poster image path |
-| title | TEXT | Localized movie title |
-| vote_average | REAL | Defaults to `0.0` |
+| Data | Live TMDB API | Static database in `assets/data/` (80 movies) |
+| API key | Required (`.env`) | Not needed |
+| Home sections | Now playing, Upcoming, Popular, Top rated | Featured, Silent films, Golden age, Modern classics |
+| Rating (stars) | TMDB users' average score | 0-10 relevance index (how many Wikipedias cover the movie) |
+| Search | Whole TMDB catalogue | Titles in the static database, accent-insensitive |
+| Favorites | SQLite on the device | SQLite on the device; on the web, in the browser (IndexedDB) |
+| Main platform | Android / iOS | Web (also works on phones) |
 
-Database access code is generated with `drift_dev` into `favorite_database.g.dart`.
+## Data sources
 
-## Domain Entities
+The static database is generated by [`tool/generate_static_db.dart`](tool/generate_static_db.dart), using only sources that allow reuse:
 
-| Entity | Fields |
-|---|---|
-| Movie | `id`, `title`, `originalTitle`, `originalLanguage`, `overview`, `popularity`, `releaseDate`, `voteAverage`, `voteCount`, `posterPath`, `backdropPath`, `genreIds`, `adult`, `video` |
-| Actor | `id`, `name`, `profilePath`, `character` |
-| Genres | `id`, `genre` |
+| Source | Provides | License |
+|---|---|---|
+| [Wikidata](https://www.wikidata.org) | Titles, dates, genres, cast and relevance | CC0 (public domain) |
+| [Wikimedia Commons](https://commons.wikimedia.org) | Posters, stills and actor photos | Each image with its own free license (public domain, CC BY, CC BY-SA…) |
+| [Spanish Wikipedia](https://es.wikipedia.org) | Plot summaries | CC BY-SA 4.0 |
 
-## Implemented Features
+The author and license of every image and text are listed in [`docs/DATA_ATTRIBUTION.md`](docs/DATA_ATTRIBUTION.md) and [`assets/data/attributions.json`](assets/data/attributions.json), and the demo shows them under the "Credits" button.
 
-### 1. Home Screen
+No TMDB or IMDb data is used: their terms don't allow publishing it as a static database.
 
-<p align="center">
-  <img src="docs/images/home_view.png" alt="Home view" width="150">
-</p>
-
-`HomeScreen` is the outer scaffold. It contains the Go Router `StatefulNavigationShell` and the custom bottom navigation. `HomeView` uses a `SliverAppBar` with a custom app bar and the search icon.
-
-The screen includes an auto-playing slideshow with the first 6 now playing movies, plus four horizontal lists with infinite pagination:
-
-| List | Provider |
-|---|---|
-| Now Playing | `nowPlayingMoviesProvider` |
-| Upcoming | `upcomingMoviesProvider` |
-| Popular | `popularMoviesProvider` |
-| Top Rated | `topRatedMoviesProvider` |
-
-A `FullScreenLoader` is shown during the initial load, with rotating messages every 1.5 seconds.
-
-### 2. Movie Details
-
-<p align="center">
-  <img src="docs/images/movie_detail.png" alt="Movie detail" width="150">
-</p>
-
-**Route:** `/movie/:id`
-
-The movie detail screen uses an expanded `SliverAppBar` with the movie backdrop and a translucent gradient. It displays the poster, title, overview, genre chips, favorite toggle and a horizontal cast list with actor photos, names and characters.
-
-The favorite button is connected to `toggleFavoriteMovies` and `isFavoriteMovieProvider`. The favorite status provider uses `.autoDispose` to release memory when leaving the detail screen. The UI also uses `FadeIn` and `FadeInRight` animations.
-
-### 3. Search
-
-<p align="center">
-  <img src="docs/images/serach_results.png" alt="Search results" width="150">
-</p>
-
-Search uses Flutter's native `SearchDelegate`, opened from the app bar icon. It includes:
-
-- 500 ms debouncing with `Timer`.
-- `StreamController` for asynchronous search results.
-- `SpinPerfect` loading indicator while searching.
-- Result rows with poster, title, 100-character overview preview and rating.
-
-### 4. Favorites
-
-<p align="center">
-  <img src="docs/images/favorites_view.png" alt="Favorites view" width="150">
-</p>
-
-`FavoritesView` is a `ConsumerStatefulWidget`. It loads the first page in `initState`, shows an empty state with a `favorite_border` icon when there are no favorites and renders data through `MoviesMasonry`.
-
-`MoviesMasonry` is a `StatefulWidget` built with a `CustomScrollView`, a collapsible top padding section and a `SliverMasonryGrid.count` with 3 columns. Its scroll listener is registered through `addPostFrameCallback` to avoid premature loading when `maxScrollExtent == 0` on the first frame.
-
-It also checks in `didUpdateWidget` whether content fills the viewport. If it does not, it keeps requesting the next page until the content overflows or there are no more results. Infinite scrolling triggers when `pixels + 200 >= maxScrollExtent`, with `isLoading` and `isLastPage` guards to avoid duplicated requests.
-
-### 5. Infinite Pagination
-
-Remote pagination is handled by `MovieHorizontalListview`, which detects the end of the horizontal scroll and calls each provider's `loadNextPage()`.
-
-Local favorite pagination is handled by `StorageMoviesNotifier.loadNextpage()` with `limit: 10` and `offset: page * 10`. Results are accumulated in a `Map<int, Movie>` to deduplicate movies by ID.
-
-### 6. Remote Data Cache
-
-- `movieInfoProvider` caches movie details by ID in a `Map<String, Movie>`.
-- `actorsByMovieProvider` caches cast lists by movie ID in a `Map<String, List<Actor>>`.
-
-### 7. Categories and Genres
-
-<p align="center">
-  <img src="docs/images/genres_list_view.png" alt="Genre list" width="150">
-</p>
-
-<p align="center">
-  <img src="docs/images/movie_by_genre.png" alt="Movies by genre" width="150">
-</p>
-
-Genres are loaded by `AllGenresDatasource` through `/genre/movie/list`, parsed with the `GenreMovies` / `Genre` model and mapped to the `Genres` entity through `GenreMapper`.
-
-The provider setup includes `genresRepositoryProvider`, which builds `GenreRepositoryImp`, and `genresProvider`, a `FutureProvider<List<Genres>>` that fetches the list once because the genre list does not need pagination.
-
-`CategoriesView` is a `ConsumerWidget` that renders a vertical `ListView.builder` with a wide `Card` for each genre. Each card uses bold large text, the theme primary color and a `FadeInRight` animation.
-
-Tapping a genre navigates with `context.push('/categories/genre/:id', extra: genre.genre)` to `MoviesByGenreScreen`.
-
-Movies by genre are fetched through `getMoviesByGenre(genreId, {page})`, added to the movies datasource contract, implemented by `MoviedbDatasource` through `/discover/movie?with_genres=`, exposed by `MovieRepositoryImp` and managed by `moviesByGenreProvider`.
-
-`MoviesByGenreScreen` is a `ConsumerStatefulWidget`. It renders a vertical `ListView.builder` of `MovieVerticalListview` rows with poster, title, truncated overview and rating. It supports infinite pagination with a `ScrollController`, using the same `pixels + 200 >= maxScrollExtent` threshold, and opens `/movie/:id` when a row is tapped.
-
-### 8. Tab Transition Animations
-
-`HomeScreen` was changed from `StatelessWidget` to `StatefulWidget`. In `didUpdateWidget`, when `navigationShell.currentIndex` changes, the shell briefly fades out with `Duration.zero` and fades back in over 200 ms through `AnimatedOpacity` and `addPostFrameCallback`.
-
-### 9. App Icon
-
-<p align="center">
-  <img src="docs/images/icon_view.png" alt="App icon" width="150">
-</p>
-
-The source image is `assets/icon/icon.png` (`1254x1254`). The icon is configured with `flutter_launcher_icons` in `pubspec.yaml` and generated with:
+### Regenerating the data
 
 ```bash
-dart run flutter_launcher_icons
+dart run tool/generate_static_db.dart                 # 20 movies per section
+dart run tool/generate_static_db.dart --per-section=30 --cast=12
 ```
 
-The command overwrites Android `mipmap-*/ic_launcher.png` assets and the iOS `AppIcon.appiconset`.
+No key is needed. It overwrites `assets/data/` and `docs/DATA_ATTRIBUTION.md`. Since Wikidata changes over time, each run may give slightly different results.
 
-## State Management
+## Relevant structure
 
-| Provider | Type | Purpose |
-|---|---|---|
-| movieRepositoryProvider | Provider | Movie repository singleton |
-| nowPlayingMoviesProvider | StateNotifierProvider | Now playing list with pagination |
-| popularMoviesProvider | StateNotifierProvider | Popular movie list with pagination |
-| upcomingMoviesProvider | StateNotifierProvider | Upcoming release list with pagination |
-| topRatedMoviesProvider | StateNotifierProvider | Top rated list with pagination |
-| moviesSlideshowProvider | Provider | First 6 now playing movies |
-| initialLoadingProvider | Provider | Boolean that is true while any main list is empty |
-| movieInfoProvider | StateNotifierProvider | Cached movie details by ID |
-| actorsRepositoryProvider | Provider | Actor repository singleton |
-| actorsByMovieProvider | StateNotifierProvider | Cached actors by movie ID |
-| searchQueryProvider | StateProvider<String> | Current search query |
-| searchedMoviesProvider | StateNotifierProvider | Search results |
-| localStorageRepositoryProvider | Provider | Local Drift repository singleton |
-| favoriteMoviesProvider | StateNotifierProvider | Paginated favorites as `Map<int, Movie>` |
-| isFavoriteMovieProvider | FutureProvider.family<bool, int> | Checks whether a movie is favorite |
-| genresRepositoryProvider | Provider | Genre repository singleton |
-| genresProvider | FutureProvider<List<Genres>> | Full genre list, loaded once |
-| moviesByGenreProvider | StateNotifierProvider.family<MoviesNotifier, List<Movie>, int> | Movies filtered by `genreId`, with pagination |
+Only what differs from the main repository:
 
-## Navigation
-
-Navigation uses `StatefulShellRoute.indexedStack` with 3 branches. `HomeScreen` acts as the outer shell.
-
-| Route | Tab | Widget |
-|---|---|---|
-| `/` | 0 - Home | `HomeView` |
-| `/categories` | 1 - Categories | `CategoriesView` |
-| `/favorites` | 2 - Favorites | `FavoritesView` |
-| `/movie/:id` | Nested under branch 0 | `MovieScreen` |
-| `/categories/genre/:id` | Nested under branch 1 | `MoviesByGenreScreen`, receiving `genreName` through `extra` |
-
-## Setup
-
-1. Copy `.env.template` to `.env`.
-2. Add your TMDB key:
-
-```env
-THE_MOVIEDB_KEY=your_tmdb_api_key
+```
+assets/data/                  Static database (JSON)
+  movies.json                 Movie catalogue
+  lists.json                  Movies in each home section
+  genres.json                 Genres
+  credits/{id}.json           Cast of each movie
+  attributions.json           Author and license of images and texts
+lib/infrastructure/
+  datasources/static/         Datasources reading the static database
+  models/static/              Models for the custom JSON format
+  mappers/static_mapper.dart  Mapping to domain entities
+tool/generate_static_db.dart  Static database generator
+web/sqlite3.wasm              SQLite for the web (favorites)
+web/drift_worker.js           Drift worker for the web
+showcase/index.html           Presentation page with the phone frame
+.github/workflows/            Automatic build and deployment
 ```
 
-3. Install dependencies:
+## Running locally
 
 ```bash
 flutter pub get
+flutter run -d chrome
 ```
 
-4. Regenerate database code if the Drift schema changes:
+To see it exactly as published (phone-frame page with the app under `app/`):
 
 ```bash
-dart run build_runner build
+flutter build web --release --base-href /demos/Cinema_App/app/
+
+mkdir -p /tmp/site/demos/Cinema_App
+cp -R showcase/. /tmp/site/demos/Cinema_App/
+cp -R build/web /tmp/site/demos/Cinema_App/app
+cd /tmp/site && python3 -m http.server 8000
+# Open http://localhost:8000/demos/Cinema_App/
 ```
 
-5. Run the app:
+## Deployment
 
-```bash
-flutter run
-```
+The [`deploy-demo.yml`](.github/workflows/deploy-demo.yml) workflow runs on every push to `main` (and manually from Actions):
 
-## Main README
+1. Runs `flutter analyze` and `flutter test`.
+2. Builds the web app with the `/demos/Cinema_App/app/` base path.
+3. Copies `showcase/` and the built app into `demos/Cinema_App/` of the [RaulEstevezA.github.io](https://github.com/RaulEstevezA/RaulEstevezA.github.io) repository, which GitHub Pages serves.
 
-[Link to the main README.md](./README.md)
+It needs the `PORTFOLIO_DEPLOY_TOKEN` Actions secret: a fine-grained token with **Contents: Read and write** permission on `RaulEstevezA.github.io` only.
+
+The website's `demos/Cinema_App/` folder is fully replaced on every deployment, so it must not be edited by hand.
+
+## Credits
+
+Project based on Fernando Herrera's **"Flutter de Cero a Experto"** course, with further independent development. Details are in the [main repository](https://github.com/RaulEstevezA/Cinema_App).
+
+## Developer
+
+**Raul Estevez**
+
+- [Personal Website](https://raulesteveza.github.io/)
+- [LinkedIn Profile](https://www.linkedin.com/in/raulesteveza/)
+
+[Back to main README](./README.md)
