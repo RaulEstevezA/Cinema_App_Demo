@@ -6,13 +6,9 @@
 #   demos/Cinema_App/       ← showcase/ (página con el marco de móvil)
 #   demos/Cinema_App/app/   ← la app Flutter compilada
 #
-# Configuración necesaria (una sola vez):
-#   1. Generar una clave:  ssh-keygen -t ed25519 -C "cinema-app-deploy" -f cinema_app_deploy -N ""
-#   2. En RaulEstevezA.github.io → Settings → Deploy keys → Add deploy key:
-#      pegar `cinema_app_deploy.pub` y marcar "Allow write access".
-#   3. En este repositorio → Settings → Secrets and variables → Actions → New repository secret:
-#      nombre SITE_DEPLOY_KEY, valor el contenido de `cinema_app_deploy` (clave privada).
-#   4. Borrar los dos ficheros de la clave del ordenador.
+# Mismo mecanismo que el despliegue de e-plantShopping: un token con permiso
+# de escritura (Contents: Read and write) sobre RaulEstevezA.github.io, guardado
+# en este repositorio como secreto de Actions PORTFOLIO_DEPLOY_TOKEN.
 
 name: Deploy demo
 
@@ -46,6 +42,15 @@ jobs:
       contents: read
 
     steps:
+      - name: Check deploy token
+        env:
+          PORTFOLIO_DEPLOY_TOKEN: ${{ secrets.PORTFOLIO_DEPLOY_TOKEN }}
+        run: |
+          if [ -z "$PORTFOLIO_DEPLOY_TOKEN" ]; then
+            echo "::error::Falta el secreto PORTFOLIO_DEPLOY_TOKEN (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
       - name: Checkout app
         uses: actions/checkout@v7
 
@@ -78,7 +83,8 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: ${{ env.SITE_REPOSITORY }}
-          ssh-key: ${{ secrets.SITE_DEPLOY_KEY }}
+          ref: main
+          token: ${{ secrets.PORTFOLIO_DEPLOY_TOKEN }}
           path: site
 
       - name: Copy build into site
@@ -97,4 +103,19 @@ jobs:
             exit 0
           fi
           git commit -m "deploy: actualizar ${DEMO_PATH} desde ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
-          git push
+
+          # Otras demos (p. ej. e-plantShopping) también publican en este repo:
+          # si el push falla por estar desactualizado, se actualiza y se reintenta.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Intento $attempt fallido; reintentando tras actualizar main."
+              sleep 5
+            fi
+          done
+
+          echo "No se pudo publicar tras 3 intentos."
+          exit 1
