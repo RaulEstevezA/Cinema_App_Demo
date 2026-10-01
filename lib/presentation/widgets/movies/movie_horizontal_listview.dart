@@ -97,14 +97,18 @@ class _Slide extends StatelessWidget {
 
           //* Imagen
 
+          // Tamaño fijo 2:3: los pósters de Commons no tienen todos la misma
+          // proporción y, si la altura dependiera de la imagen, la tarjeta se desbordaría.
           SizedBox(
             width: 150,
+            height: 225,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.network(
                 movie.posterPath,
                 fit: BoxFit.cover,
                 width: 150,
+                height: 225,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress != null) {
                     return const Padding(

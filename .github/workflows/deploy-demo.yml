@@ -1,8 +1,10 @@
 # Compila la app para web y la publica en la sección de demos de la web
 # personal: https://raulesteveza.github.io/demos/Cinema_App/
 #
-# El build se copia en `demos/Cinema_App/` del repositorio
-# RaulEstevezA/RaulEstevezA.github.io, que GitHub Pages publica al recibir el push.
+# Se publica en el repositorio RaulEstevezA/RaulEstevezA.github.io, que GitHub
+# Pages sirve al recibir el push:
+#   demos/Cinema_App/       ← showcase/ (página con el marco de móvil)
+#   demos/Cinema_App/app/   ← la app Flutter compilada
 #
 # Configuración necesaria (una sola vez):
 #   1. Generar una clave:  ssh-keygen -t ed25519 -C "cinema-app-deploy" -f cinema_app_deploy -N ""
@@ -21,6 +23,7 @@ on:
       - 'lib/**'
       - 'assets/**'
       - 'web/**'
+      - 'showcase/**'
       - 'test/**'
       - 'pubspec.yaml'
       - 'pubspec.lock'
@@ -63,7 +66,13 @@ jobs:
         run: flutter test
 
       - name: Build web
-        run: flutter build web --release --base-href "/${DEMO_PATH}/"
+        run: flutter build web --release --base-href "/${DEMO_PATH}/app/"
+
+      - name: Assemble demo
+        run: |
+          mkdir -p dist
+          cp -R showcase/. dist/
+          cp -R build/web dist/app
 
       - name: Checkout site
         uses: actions/checkout@v7
@@ -75,7 +84,7 @@ jobs:
       - name: Copy build into site
         run: |
           mkdir -p "site/${DEMO_PATH}"
-          rsync -a --delete build/web/ "site/${DEMO_PATH}/"
+          rsync -a --delete dist/ "site/${DEMO_PATH}/"
 
       - name: Commit and push
         working-directory: site

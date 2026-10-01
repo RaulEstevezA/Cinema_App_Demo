@@ -1,5 +1,6 @@
 import 'package:cinema_app/config/router/app_router.dart';
 import 'package:cinema_app/config/theme/app_theme.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -40,6 +41,21 @@ class MainApp extends StatelessWidget {
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
       theme: AppTheme().getTheme(),
+      scrollBehavior: const _DragScrollBehavior(),
     );
   }
+}
+
+// En web, Flutter solo permite arrastrar listas con el dedo; esto habilita
+// también el ratón y el trackpad para que los carruseles funcionen en escritorio.
+class _DragScrollBehavior extends MaterialScrollBehavior {
+  const _DragScrollBehavior();
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.trackpad,
+    PointerDeviceKind.stylus,
+  };
 }
