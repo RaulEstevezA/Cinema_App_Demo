@@ -39,7 +39,13 @@ class AppDatabase extends _$AppDatabase {
         // database files in `getApplicationDocumentsDirectory()`.
         databaseDirectory: getApplicationSupportDirectory,
       ),
-      // If you need web support, see https://drift.simonbinder.eu/platforms/web/
+      // En web se usan `web/sqlite3.wasm` (sqlite3 3.3.3) y `web/drift_worker.js`
+      // (drift 2.34.0); al actualizar esos paquetes hay que descargar las
+      // versiones correspondientes: https://drift.simonbinder.eu/platforms/web/
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
     );
   }
 }

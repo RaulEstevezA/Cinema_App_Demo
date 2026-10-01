@@ -2,7 +2,6 @@ import 'package:cinema_app/presentation/providers/providers.dart';
 import 'package:cinema_app/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 
 
@@ -63,28 +62,27 @@ class HomeViewState extends ConsumerState<HomeView> {
 
               MovieHorizontalListview(
                 movies: nowPlayingMovies,
-                title: 'En Cines',
-                subTitle: DateFormat('EEEE d', 'es').format(DateTime.now()),
+                title: 'Destacadas',
                 loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(),
               ),
 
               MovieHorizontalListview(
                 movies: upcomingMovies,
-                title: 'Proximamente',
+                title: 'Cine mudo',
                 // subTitle: "lunes 20",
                 loadNextPage: () => ref.read(upcomingMoviesProvider.notifier).loadNextPage(),
               ),
 
               MovieHorizontalListview(
                 movies: popularMovies,
-                title: 'Populares',
+                title: 'Edad de oro',
                 // subTitle: "lunes 20",
                 loadNextPage: () => ref.read(popularMoviesProvider.notifier).loadNextPage(),
               ),
 
               MovieHorizontalListview(
                 movies: topRatedMovies,
-                title: 'Mejor valoradas',
+                title: 'Clásicos modernos',
                 // subTitle: "lunes 20",
                 loadNextPage: () => ref.read(topRatedMoviesProvider.notifier).loadNextPage(),
               ),

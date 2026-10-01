@@ -1,0 +1,91 @@
+# Compila la app para web y la publica en la sección de demos de la web
+# personal: https://raulesteveza.github.io/demos/Cinema_App/
+#
+# El build se copia en `demos/Cinema_App/` del repositorio
+# RaulEstevezA/RaulEstevezA.github.io, que GitHub Pages publica al recibir el push.
+#
+# Configuración necesaria (una sola vez):
+#   1. Generar una clave:  ssh-keygen -t ed25519 -C "cinema-app-deploy" -f cinema_app_deploy -N ""
+#   2. En RaulEstevezA.github.io → Settings → Deploy keys → Add deploy key:
+#      pegar `cinema_app_deploy.pub` y marcar "Allow write access".
+#   3. En este repositorio → Settings → Secrets and variables → Actions → New repository secret:
+#      nombre SITE_DEPLOY_KEY, valor el contenido de `cinema_app_deploy` (clave privada).
+#   4. Borrar los dos ficheros de la clave del ordenador.
+
+name: Deploy demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'assets/**'
+      - 'web/**'
+      - 'test/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/deploy-demo.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-demo
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.47.5'
+  SITE_REPOSITORY: RaulEstevezA/RaulEstevezA.github.io
+  DEMO_PATH: demos/Cinema_App
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout app
+        uses: actions/checkout@v7
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build web
+        run: flutter build web --release --base-href "/${DEMO_PATH}/"
+
+      - name: Checkout site
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ env.SITE_REPOSITORY }}
+          ssh-key: ${{ secrets.SITE_DEPLOY_KEY }}
+          path: site
+
+      - name: Copy build into site
+        run: |
+          mkdir -p "site/${DEMO_PATH}"
+          rsync -a --delete build/web/ "site/${DEMO_PATH}/"
+
+      - name: Commit and push
+        working-directory: site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${DEMO_PATH}"
+          if git diff --cached --quiet; then
+            echo "Sin cambios en ${DEMO_PATH}"
+            exit 0
+          fi
+          git commit -m "deploy: actualizar ${DEMO_PATH} desde ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git push

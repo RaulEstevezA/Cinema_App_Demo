@@ -1,7 +1,6 @@
 import 'package:cinema_app/config/router/app_router.dart';
 import 'package:cinema_app/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -28,7 +27,6 @@ Future<void> main() async {
   // final moviesQuery = await db.select(db.favoriteMovies).get();
   // print('movies $moviesQuery');
 
-  await dotenv.load(fileName: '.env');
   await initializeDateFormatting('es');
   runApp(const ProviderScope(child:  MainApp()));
 }
