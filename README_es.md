@@ -5,9 +5,9 @@
 > Aquí solo está la **versión de demostración web** que se publica en mi web.
 > El proyecto completo (código fuente, la versión original con la API de TMDB e instrucciones para descargar y ejecutar la app) está en:
 >
-> **➡️ [RaulEstevezA/Cinema_App](https://github.com/RaulEstevezA/Cinema_App)**
+> **[RaulEstevezA/Cinema_App](https://github.com/RaulEstevezA/Cinema_App)**
 
-**▶️ Demo en vivo:** [raulesteveza.github.io/demos/Cinema_App](https://raulesteveza.github.io/demos/Cinema_App/)
+**Demo en vivo:** [raulesteveza.github.io/demos/Cinema_App](https://raulesteveza.github.io/demos/Cinema_App/)
 
 <p align="center">
   <a href="https://raulesteveza.github.io/demos/Cinema_App/">

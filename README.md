@@ -5,9 +5,9 @@
 > This repository only contains the **web demo** published on my website.
 > The full project (source code, the original version using the TMDB API, and instructions to download and run the app) lives here:
 >
-> **➡️ [RaulEstevezA/Cinema_App](https://github.com/RaulEstevezA/Cinema_App)**
+> **[RaulEstevezA/Cinema_App](https://github.com/RaulEstevezA/Cinema_App)**
 
-**▶️ Live demo:** [raulesteveza.github.io/demos/Cinema_App](https://raulesteveza.github.io/demos/Cinema_App/)
+**Live demo:** [raulesteveza.github.io/demos/Cinema_App](https://raulesteveza.github.io/demos/Cinema_App/)
 
 - 🇬🇧 **English:** [About this demo repository](./README_en.md)
 - 🇪🇸 **Español:** [Sobre este repositorio de demo](./README_es.md)
