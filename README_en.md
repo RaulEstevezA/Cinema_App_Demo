@@ -101,18 +101,6 @@ cd /tmp/site && python3 -m http.server 8000
 # Open http://localhost:8000/demos/Cinema_App/
 ```
 
-## Deployment
-
-The [`deploy-demo.yml`](.github/workflows/deploy-demo.yml) workflow runs on every push to `main` (and manually from Actions):
-
-1. Runs `flutter analyze` and `flutter test`.
-2. Builds the web app with the `/demos/Cinema_App/app/` base path.
-3. Copies `showcase/` and the built app into `demos/Cinema_App/` of the [RaulEstevezA.github.io](https://github.com/RaulEstevezA/RaulEstevezA.github.io) repository, which GitHub Pages serves.
-
-It needs the `PORTFOLIO_DEPLOY_TOKEN` Actions secret: a fine-grained token with **Contents: Read and write** permission on `RaulEstevezA.github.io` only.
-
-The website's `demos/Cinema_App/` folder is fully replaced on every deployment, so it must not be edited by hand.
-
 ## Credits
 
 Project based on Fernando Herrera's **"Flutter de Cero a Experto"** course, with further independent development. Details are in the [main repository](https://github.com/RaulEstevezA/Cinema_App).
