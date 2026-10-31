@@ -79,6 +79,28 @@ jobs:
           cp -R showcase/. dist/
           cp -R build/web dist/app
 
+      # Cada HTML publicado debe llevar el beacon de Cloudflare Web Analytics
+      # exactamente una vez (ver PUBLISHING.md de la guía de estilo).
+      - name: Check Cloudflare Web Analytics
+        run: |
+          status=0
+          count_html=0
+          while IFS= read -r -d '' file; do
+            count_html=$((count_html + 1))
+            count=$({ grep -o 'static.cloudflareinsights.com/beacon.min.js' "$file" || true; } | wc -l | tr -d ' ')
+            if [ "$count" -ne 1 ]; then
+              echo "::error file=${file}::${file} contiene el beacon de Cloudflare Web Analytics ${count} veces (se espera exactamente 1)."
+              status=1
+            else
+              echo "OK ${file}"
+            fi
+          done < <(find dist -name '*.html' -print0)
+          if [ "$count_html" -eq 0 ]; then
+            echo "::error::No se encontró ningún HTML en dist/."
+            exit 1
+          fi
+          exit $status
+
       - name: Checkout site
         uses: actions/checkout@v7
         with:
